@@ -382,42 +382,6 @@ def show_plt(f1, f2):
 # ======================================================================================================================
 
 
-def print_results_comparing(b, e, l, t, y):
-
-    r_b = permotations_vectors(b, b, True)
-    r_e = permotations_vectors(e, e, True)
-    r_l = permotations_vectors(l, l, True)
-    r_t = permotations_vectors(t, t, True)
-    r_y = permotations_vectors(y, y, True)
-    diff_res = []
-    differences_vecs = [b, e, l, t, y]
-    for i in range(len(differences_vecs)):
-        for j in range(i + 1, len(differences_vecs)):
-            diff_res += permotations_vectors(differences_vecs[i], differences_vecs[j], False)
-
-    print("******************************************** b permutations **********************************************")
-    print(r_b)
-    print("average:", sum(r_b)/len(r_b), ", min:", min(r_b), ", max:", max(r_b))
-    print("******************************************** e permutations ********************************************")
-    print(r_e)
-    print("average:", sum(r_e)/len(r_e), ", min:", min(r_e), ", max:", max(r_e))
-    print("******************************************** l permutations ********************************************")
-    print(r_l)
-    print("average:", sum(r_l)/len(r_l), ", min:", min(r_l), ", max:", max(r_l))
-    print("******************************************** t permutations ********************************************")
-    print(r_t)
-    print("average:", sum(r_t)/len(r_t), ", min:", min(r_t), ", max:", max(r_t))
-    print("******************************************** y permutations ********************************************")
-    print(r_y)
-    print("average:", sum(r_y)/len(r_y), ", min:", min(r_y), ", max:", max(r_y))
-    
-    print("########################################## Other persons ###############################################")
-    print(diff_res)
-    print("average:", sum(diff_res)/len(diff_res), ", min:", min(diff_res), ", max:", max(diff_res))
-
-# ======================================================================================================================
-
-
 if __name__ == "__main__":
 
     hog_face_detector = dlib.get_frontal_face_detector()
