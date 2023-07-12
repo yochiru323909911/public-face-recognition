@@ -7,6 +7,7 @@ import os
 from skimage import transform as trans
 from face_align.app import align
 # ======================================================================================================================
+THRESHOLD = 50 #the threshold with two images of the same person
 WEIGHT_HISTOGRAM = 1000
 NUM_POINTS = 8  # Number of neighboring points to compare
 RADIUS = 1  # Radius of the circular neighborhood
@@ -31,7 +32,8 @@ FEATURES_RANGE = [
     {"min": 4, "max": 30},
     {"min": 22, "max": 55}
 ]
-
+hog_face_detector = dlib.get_frontal_face_detector()
+dlib_facelandmark = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 # ======================================================================================================================
 
 
@@ -45,7 +47,7 @@ def compute_lbp(pixel, neighbors):
 # ======================================================================================================================
 
 
-# Function to calculate LBP histogram
+# Calculate LBP histogram
 def calculate_lbp_histogram(image):
     lbp_image = np.zeros_like(image)
     rows, cols = image.shape
@@ -382,9 +384,32 @@ def show_plt(f1, f2):
 # ======================================================================================================================
 
 
-if __name__ == "__main__":
+"""
+The user want to register and send some images.
+"""
 
-    hog_face_detector = dlib.get_frontal_face_detector()
-    dlib_facelandmark = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
-    features_list = recognize_face(input("Enter the file path"), hog_face_detector, dlib_facelandmark)
+def register(images):
+    images_features = []
+    for img in images:
+        images_features.append(recognize_face(img, hog_face_detector, dlib_facelandmark))
+    features = [0 for i in range(len(images_features[0]))]
+    for feature in range(len(images_features[0])):
+        for img_features in images_features:
+            features[feature] += img_features
+        features[feature] /= len(images_features)
+    return features
+# ======================================================================================================================
+
+
+"""
+The user is already register and want to open a locked application
+"""
+
+
+def unlock_ask(user_features):
+    features_list = recognize_face(input("Enter the image path: "), hog_face_detector, dlib_facelandmark)
+    if compare_features(user_features, features_list) > THRESHOLD:
+        return False, features_list
+    return True, [(user_features[i] + features_list[i]) / 2 for i in range(len(features_list))]
+# ======================================================================================================================
