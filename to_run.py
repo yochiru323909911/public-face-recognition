@@ -387,4 +387,4 @@ if __name__ == "__main__":
     hog_face_detector = dlib.get_frontal_face_detector()
     dlib_facelandmark = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
-    features_list = recognize_face(hog_face_detector, dlib_facelandmark, input("Enter the file path"))
+    features_list = recognize_face(input("Enter the file path"), hog_face_detector, dlib_facelandmark)
