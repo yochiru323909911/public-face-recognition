@@ -407,8 +407,8 @@ The user is already register and want to open a locked application
 """
 
 
-def unlock_ask(user_features):
-    features_list = recognize_face(input("Enter the image path: "), hog_face_detector, dlib_facelandmark)
+def unlock_ask(user_features, image):
+    features_list = recognize_face(image, hog_face_detector, dlib_facelandmark)
     if compare_features(user_features, features_list) > THRESHOLD:
         return False, features_list
     return True, [(user_features[i] + features_list[i]) / 2 for i in range(len(features_list))]
