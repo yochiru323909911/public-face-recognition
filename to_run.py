@@ -3,11 +3,10 @@ import numpy as np
 import dlib
 from matplotlib import pyplot as plt
 from scipy.spatial.distance import euclidean
-import os
-from skimage import transform as trans
 from face_align.app import align
+
 # ======================================================================================================================
-THRESHOLD = 50 #the threshold with two images of the same person
+THRESHOLD = 100 #the threshold with two images of the same person
 WEIGHT_HISTOGRAM = 1000
 NUM_POINTS = 8  # Number of neighboring points to compare
 RADIUS = 1  # Radius of the circular neighborhood
@@ -140,7 +139,7 @@ def extract_features(eyes, nose, mouth, eyebrow, jaw):
     features = []
 
     lips_ellipse = cv2.fitEllipse(np.array(mouth, dtype=np.float32))
-    features.append(euclidean(lips_ellipse[1][0], lips_ellipse[1][1]))  # extract the height (length of major axis)
+    features.append(abs(lips_ellipse[1][0] - lips_ellipse[1][1]))  # extract the height (length of major axis)
 
     # Extract the distance between the eyes
     eye1, eye2 = eyes[RIGHT], eyes[LEFT]
@@ -408,8 +407,15 @@ The user is already register and want to open a locked application
 
 
 def unlock_ask(user_features, image):
-    features_list = recognize_face(image, hog_face_detector, dlib_facelandmark)
-    if compare_features(user_features, features_list) > THRESHOLD:
-        return False, features_list
-    return True, [(user_features[i] + features_list[i]) / 2 for i in range(len(features_list))]
+    features_vec = recognize_face(image, hog_face_detector, dlib_facelandmark)
+    if compare_features(user_features, features_vec) > THRESHOLD:
+        return False, user_features
+    return True, [(user_features[i] + features_vec[i]) / 2 for i in range(len(features_vec))]
 # ======================================================================================================================
+
+
+
+
+
+
+
