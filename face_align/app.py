@@ -2,7 +2,7 @@ import cv2, dlib, argparse
 from face_align.utils import extract_left_eye_center, extract_right_eye_center, get_rotation_matrix
 
 
-def align(detector, predictor, input_image, scale):
+def align(detector, predictor, color_img, scale):
     """
    Align a face in an input image using facial landmarks.
 
@@ -34,13 +34,14 @@ def align(detector, predictor, input_image, scale):
    are assumed to be defined elsewhere in the codebase.
    """
 
-    color = cv2.imread(input_image)
-    img = cv2.imread(input_image, cv2.IMREAD_GRAYSCALE)
+    if isinstance(color_img, str):
+        color_img = cv2.imread(color_img)
+    img = cv2.cvtColor(color_img, cv2.COLOR_BGR2GRAY)
 
     height, width = img.shape[:2]
     s_height, s_width = height // scale, width // scale
     img = cv2.resize(img, (s_width, s_height))
-    color = cv2.resize(color, (s_width, s_height))
+    color = cv2.resize(color_img, (s_width, s_height))
 
     dets = detector(img, 1)
 

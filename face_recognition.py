@@ -187,12 +187,15 @@ def resize_face(colorfull, gray):
 
     # Get the bounding box around the face
     x, y, w, h = cv2.boundingRect(np.array(landmark_coords))
+
     # Crop the image with the face
     face_gray = gray[y:y + h, x:x + w]
     face_colorfull = colorfull[y:y + h, x:x + w]
     height, width = face_gray.shape[:2]
+
     # Set the new width and calculate the new height to maintain aspect ratio
     new_height = int((height / width) * IMAGE_WIDTH)
+
     # Resize the image to the new dimensions
     resized_gray = cv2.resize(face_gray, (IMAGE_WIDTH, new_height))
     resized_colorfull = cv2.resize(face_colorfull, (IMAGE_WIDTH, new_height))
@@ -361,7 +364,7 @@ def find_skin_color(image, nose, eyebrow, jaw):
     skin_color_a = (right_cheek_a + left_cheek_a + forehead_a + nose_a) // 4
     skin_color_b = (right_cheek_b + left_cheek_b + forehead_b + nose_b) // 4
 
-    return skin_color_a, skin_color_b
+    return [skin_color_a, skin_color_b]
 # ======================================================================================================================
 
 
@@ -763,7 +766,7 @@ def extract_angles(features, eyes, nose, mouth, eyebrow, jaw):
 # ======================================================================================================================
 
 
-def recognize_face(image_name):
+def recognize_face(image):
     """
     Recognize a face in the given image using a combination of features and comparisons.
 
@@ -775,7 +778,7 @@ def recognize_face(image_name):
                                                 None if face detection or landmark extraction fails.
     """
 
-    rotated_gray, rotated_color = align(hog_face_detector, dlib_facelandmark, image_name, 4)
+    rotated_gray, rotated_color = align(hog_face_detector, dlib_facelandmark, image, 4)
 
     if rotated_gray is None:
         return None
@@ -783,7 +786,6 @@ def recognize_face(image_name):
     final_gray, final_color, landmarks_coords = resize_face(rotated_color, rotated_gray)
 
     if landmarks_coords is None:
-        print(image_name)
         return None
 
     hist = compute_texture(final_gray)
@@ -870,13 +872,6 @@ def register(images):
         return None  # If no features were extracted, return None
 
     return features  # Return the processed feature data
-
-# The 'recognize_face' function is not provided in the code snippet and should be defined elsewhere in the codebase.
-
-
-
-
-
 
 
 
