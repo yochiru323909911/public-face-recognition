@@ -1,3 +1,3 @@
 # public-face-recognition
 
-Look on "to_run.py" file.
+Look at "face_recognition.py" file.
