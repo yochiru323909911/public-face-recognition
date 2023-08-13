@@ -812,22 +812,22 @@ def recognize_face(image):
 # ======================================================================================================================
 
 
-def unlock_ask(user_features, image_path):
+def unlock_ask(user_features, image):
     """
     Determine whether the provided user features match the features extracted from the image.
 
     Args:
         user_features (list): List of user's features for comparison.
-        image_path (str): The filename of the input image containing a face.
+        image (str or image): The filename of the input image containing a face or the actual image.
 
     Returns:
         is_unlocked (bool): True if the features match and the user is unlocked, False otherwise.
         updated_user_features (list): Updated user features after averaging with new features.
     """
-    new_features = recognize_face(image_path)
+    new_features = recognize_face(image)
     if compare_features(list(new_features), list(user_features)) > THRESHOLD:
         return False, user_features
-    return True, [(user_features[i] + new_features[i]) / 2 for i in range(len(new_features))]
+    return True, [(user_features[i] + new_features[i]) / 2 for i in range(len(new_features))]  # The new average
 # ======================================================================================================================
 
 
@@ -858,24 +858,17 @@ def register(images):
             images_features.append(res)  # If features were extracted, add them to the 'images_features' list
 
     # Initialize a list 'features' to hold the processed feature data
-    features = [[] for _ in range(len(images_features[0]))]
-
-    # Loop through each feature index
+    features = [0 for _ in range(len(images_features[0]))]
     for feature in range(len(images_features[0])):
-        # Loop through each set of image features
         for img_features in images_features:
-            features[feature].append(img_features[feature])  # Collect the corresponding feature value for each image
-        features[feature] = np.median(features[feature])  # Calculate the median of collected feature values
+            features[feature] += img_features[feature]
+        features[feature] /= len(images_features)
 
     # Check if no features were extracted from any image
     if len(features) == 0:
         return None  # If no features were extracted, return None
 
     return features  # Return the processed feature data
-
-
-
-
 
 
 
