@@ -4,6 +4,7 @@ NUM_POINTS = 8  # Number of neighboring points to compare
 RADIUS = 1  # Radius of the circular neighborhood
 RADIUS_COLOR = 5
 IRIS_TOLARENCE = 20
+SHINE_THRESHOLD = 25
 IMAGE_WIDTH = 500
 LEFT = 0
 RIGHT = 1
@@ -38,6 +39,7 @@ FEATURES_RANGE = [
     {"min": 0, "max": 255},
     {"min": 130, "max": 400},
     {"min": 65, "max": 400},
+    {"min": 90, "max": 180},
     {"min": 0.5, "max": 5},
     {"min": 2, "max": 200},
     {"min": 0.1, "max": 40},

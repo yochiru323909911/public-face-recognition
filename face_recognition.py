@@ -5,8 +5,8 @@ from scipy.spatial.distance import euclidean
 from face_align.app import align
 import face_symmetry as fs
 import math
-from config import NUM_FEATURES, THRESHOLD, NUM_POINTS, RADIUS, RADIUS_COLOR, IRIS_TOLARENCE, IMAGE_WIDTH, \
-    LEFT, RIGHT, T_MIN, T_MAX, FACIAL_LANDMARKS_IDXS, FEATURES_RANGE
+from config import NUM_FEATURES, THRESHOLD, NUM_POINTS, RADIUS, RADIUS_COLOR, IRIS_TOLARENCE, SHINE_THRESHOLD, \
+    IMAGE_WIDTH, LEFT, RIGHT, T_MIN, T_MAX, FACIAL_LANDMARKS_IDXS, FEATURES_RANGE
 # ======================================================================================================================
 
 
@@ -296,7 +296,7 @@ def extract_features(eyes, nose, mouth, eyebrow, jaw):
     # Extract the thickness of the lips
     features.append(euclidean(mouth[2], mouth[13]))
     features.append(euclidean(mouth[3], mouth[14]))
-    features.append(euclidean(mouth[8], mouth[18]))
+    features.append(euclidean(mouth[9], mouth[18]))
     return features
 # ======================================================================================================================
 
@@ -496,7 +496,7 @@ def find_eye_color(image, eye):
     l, a, b = cv2.split(lab)
 
     # Create a binary mask where the L channel values are greater than a threshold
-    mask = (l > np.mean(l) - IRIS_TOLARENCE).astype(np.uint8)
+    mask = ((l > np.mean(l) - IRIS_TOLARENCE) & (l < np.mean(l) + SHINE_THRESHOLD)).astype(np.uint8)
 
     # Calculate the mean A and B values using the mask
     a_mean = np.mean(a * mask)
@@ -740,8 +740,10 @@ def extract_angles(features, eyes, nose, mouth, eyebrow, jaw):
     # Distance between eyes and the above of eyebrows
     features.append((euclidean(eyes[RIGHT][3], eyebrow[LEFT][4]) + euclidean(eyes[LEFT][0], eyebrow[LEFT][0])) / 2)
 
-    # Average of eyes width
     features.append(((euclidean(eyes[RIGHT][0], eyes[RIGHT][3]) + euclidean(eyes[LEFT][0], eyes[LEFT][3])) / 2))
+
+    # Angle between the start and the end of the eye
+    features.append((calculate_angle([eyes[RIGHT][3], eyes[RIGHT][0], eyes[RIGHT][4]]) + calculate_angle([eyes[LEFT][3], eyes[LEFT][0], eyes[LEFT][-1]])) / 2)
 
     # Roundness of jaw
     features.append(calculate_roundness_index(jaw))
@@ -825,6 +827,8 @@ def unlock_ask(user_features, image):
         updated_user_features (list): Updated user features after averaging with new features.
     """
     new_features = recognize_face(image)
+    if new_features is None:
+        return None
     if compare_features(list(new_features), list(user_features)) > THRESHOLD:
         return False, user_features
     return True, [(user_features[i] + new_features[i]) / 2 for i in range(len(new_features))]  # The new average
@@ -869,16 +873,6 @@ def register(images):
         return None  # If no features were extracted, return None
 
     return features  # Return the processed feature data
-
-
-
-
-
-
-
-
-
-
 
 
 
