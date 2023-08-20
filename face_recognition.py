@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import dlib
 from scipy.spatial.distance import euclidean
-from face_align.app import align
+from face_align.alignment import align
 import face_symmetry as fs
 import math
 from config import NUM_FEATURES, THRESHOLD, NUM_POINTS, RADIUS, RADIUS_COLOR, IRIS_TOLARENCE, SHINE_THRESHOLD, \
