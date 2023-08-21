@@ -872,7 +872,6 @@ def register(images):
     return features  # Return the processed feature data
 
 
-register(["received_image.png"])
 
 
 
