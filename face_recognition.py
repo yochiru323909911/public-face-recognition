@@ -858,6 +858,10 @@ def register(images):
         if res is not None:
             images_features.append(res)  # If features were extracted, add them to the 'images_features' list
 
+    # Check if no features were extracted from any image
+    if len(images_features) == 0:
+        return None  # If no features were extracted, return None
+
     # Initialize a list 'features' to hold the processed feature data
     features = [0 for _ in range(len(images_features[0]))]
     for feature in range(len(images_features[0])):
@@ -865,14 +869,10 @@ def register(images):
             features[feature] += img_features[feature]
         features[feature] /= len(images_features)
 
-    # Check if no features were extracted from any image
-    if len(features) == 0:
-        return None  # If no features were extracted, return None
-
     return features  # Return the processed feature data
 
 
-
+register(["received_image.png"])
 
 
 
