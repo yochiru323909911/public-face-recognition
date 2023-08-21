@@ -2,7 +2,35 @@ import cv2, dlib, argparse
 from face_align.utils import extract_left_eye_center, extract_right_eye_center, get_rotation_matrix
 
 
-def align(detector, predictor, color_img, scale):
+def refind_landmarks(shape, M):
+    """
+    Re-calculate the landmarks' positions on a rotated image using the given rotation matrix.
+
+    Args:
+        shape (dlib.full_object_detection): A dlib shape object representing facial landmarks on the original image.
+        M (numpy.ndarray): The 2x3 rotation matrix used to align the image.
+
+    Returns:
+        list: A list of tuples containing the new (x, y) coordinates of the re-calculated landmarks.
+
+    This function takes a dlib shape object representing facial landmarks and a rotation matrix used to align
+    the image to a rotated position. It calculates the new positions of the landmarks on the rotated image
+    by applying the same rotation transformation to each landmark point.
+
+    The landmarks' coordinates are transformed using the given rotation matrix M, ensuring that the landmarks'
+    positions on the rotated image correspond to their positions on the original image.
+    """
+    new_landmarks = []
+    for i in range(shape.num_parts):
+        x, y = shape.part(i).x, shape.part(i).y
+        new_x = int(M[0, 0] * x + M[0, 1] * y + M[0, 2])
+        new_y = int(M[1, 0] * x + M[1, 1] * y + M[1, 2])
+        new_landmarks.append((new_x, new_y))
+    return new_landmarks
+# ======================================================================================================================
+
+
+def align(detector, predictor, input_image, scale):
     """
    Align a face in an input image using facial landmarks.
 
@@ -13,7 +41,12 @@ def align(detector, predictor, color_img, scale):
        scale (int): Scale factor for resizing the image.
 
    Returns:
-       tuple: A tuple containing the aligned grayscale and color images, respectively.
+       rotated_gray: The gray rotated image.
+       rotated_color: The color rotated image.
+       new_landmarks: The landmarks of the rotated images.
+
+       Or None if a face didn't detect in the image.
+
 
    This function aligns a face in an input image using facial landmarks.
    It takes a dlib face detector, a facial landmark predictor, the path to the input image,
@@ -34,14 +67,13 @@ def align(detector, predictor, color_img, scale):
    are assumed to be defined elsewhere in the codebase.
    """
 
-    if isinstance(color_img, str):
-        color_img = cv2.imread(color_img)
-    img = cv2.cvtColor(color_img, cv2.COLOR_BGR2GRAY)
+    color = cv2.imread(input_image)
+    img = cv2.imread(input_image, cv2.IMREAD_GRAYSCALE)
 
     height, width = img.shape[:2]
     s_height, s_width = height // scale, width // scale
     img = cv2.resize(img, (s_width, s_height))
-    color = cv2.resize(color_img, (s_width, s_height))
+    color = cv2.resize(color, (s_width, s_height))
 
     dets = detector(img, 1)
 
@@ -54,6 +86,10 @@ def align(detector, predictor, color_img, scale):
         rotated_gray = cv2.warpAffine(img, M, (s_width, s_height), flags=cv2.INTER_CUBIC)
         rotated_color = cv2.warpAffine(color, M, (s_width, s_height), flags=cv2.INTER_CUBIC)
 
-        return rotated_gray, rotated_color
+        # Re-calculate the landmarks with the rotation matrix
+        new_landmarks = refind_landmarks(shape, M)
+
+        return rotated_gray, rotated_color, new_landmarks
+
     print("No detection!☹")
-    return None, None
+    return None, None, None

@@ -166,13 +166,14 @@ def find_landmarks(img, hog_face_detector, dlib_facelandmark):
 # ======================================================================================================================
 
 
-def resize_face(colorfull, gray):
+def resize_face(colorfull, gray, landmark_coords):
     """
     Resize and crop a face image while maintaining aspect ratio.
 
     Args:
         colorfull (numpy.ndarray): The input color face image.
         gray (numpy.ndarray): The corresponding grayscale face image.
+        landmarks_coords (list): The face dlib landmarks
 
     Returns:
         resized_gray (numpy.ndarray): Resized grayscale face image.
@@ -180,28 +181,27 @@ def resize_face(colorfull, gray):
         landmark_coords (list): List of facial landmark coordinates in the resized image.
     """
 
-    landmark_coords = find_landmarks(gray, hog_face_detector, dlib_facelandmark)
-
-    if landmark_coords is None:
-        return None, None, None
-
     # Get the bounding box around the face
     x, y, w, h = cv2.boundingRect(np.array(landmark_coords))
-
     # Crop the image with the face
     face_gray = gray[y:y + h, x:x + w]
     face_colorfull = colorfull[y:y + h, x:x + w]
     height, width = face_gray.shape[:2]
-
     # Set the new width and calculate the new height to maintain aspect ratio
     new_height = int((height / width) * IMAGE_WIDTH)
-
     # Resize the image to the new dimensions
     resized_gray = cv2.resize(face_gray, (IMAGE_WIDTH, new_height))
     resized_colorfull = cv2.resize(face_colorfull, (IMAGE_WIDTH, new_height))
-    landmark_coords = find_landmarks(resized_gray, hog_face_detector, dlib_facelandmark)
 
-    return resized_gray, resized_colorfull, landmark_coords
+    width_scale = IMAGE_WIDTH / width
+    height_scale = new_height / height
+    adjusted_landmark_coords = []
+    for landmark in landmark_coords:
+        adjusted_x = int((landmark[0] - x) * width_scale)
+        adjusted_y = int((landmark[1] - y) * height_scale)
+        adjusted_landmark_coords.append((adjusted_x, adjusted_y))
+
+    return resized_gray, resized_colorfull, adjusted_landmark_coords
 # ======================================================================================================================
 
 
@@ -780,15 +780,12 @@ def recognize_face(image):
                                                 None if face detection or landmark extraction fails.
     """
 
-    rotated_gray, rotated_color = align(hog_face_detector, dlib_facelandmark, image, 4)
+    rotated_gray, rotated_color, landmarks = align(hog_face_detector, dlib_facelandmark, image, 4)
 
     if rotated_gray is None:
         return None
 
-    final_gray, final_color, landmarks_coords = resize_face(rotated_color, rotated_gray)
-
-    if landmarks_coords is None:
-        return None
+    final_gray, final_color, landmarks_coords = resize_face(rotated_color, rotated_gray, landmarks)
 
     hist = compute_texture(final_gray)
 
