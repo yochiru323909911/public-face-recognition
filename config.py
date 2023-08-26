@@ -1,5 +1,5 @@
 NUM_FEATURES = 23
-THRESHOLD = 21000  # The threshold for two person
+THRESHOLD = 20000  # The threshold for two person
 NUM_POINTS = 8  # Number of neighboring points to compare
 RADIUS = 1  # Radius of the circular neighborhood
 RADIUS_COLOR = 5
@@ -24,26 +24,26 @@ FACIAL_LANDMARKS_IDXS = {
 FEATURES_RANGE = [
     {"min": 0, "max": 255},
     {"min": 0, "max": 255},
-    {"min": 0.8, "max": 1.5},
-    {"min": 50, "max": 210},
-    {"min": 110, "max": 150},
-    {"min": 75, "max": 170},
-    {"min": 35, "max": 70},
-    {"min": 150, "max": 215},
-    {"min": 70, "max": 110},
-    {"min": 50, "max": 100},
-    {"min": 10, "max": 38},
-    {"min": 8, "max": 32},
-    {"min": 30, "max": 55},
     {"min": 0, "max": 255},
     {"min": 0, "max": 255},
-    {"min": 130, "max": 400},
-    {"min": 65, "max": 400},
-    {"min": 90, "max": 180},
-    {"min": 0.5, "max": 5},
-    {"min": 2, "max": 200},
-    {"min": 0.1, "max": 40},
-    {"min": 140, "max": 175},
-    {"min": 115, "max": 170},
-    {"min": 45, "max": 300},
+    {"min": 1, "max": 2},
+    {"min": 25, "max": 300},
+    {"min": 100, "max": 200},
+    {"min": 60, "max": 200},
+    {"min": 20, "max": 150},
+    {"min": 110, "max": 300},
+    {"min": 65, "max": 200},
+    {"min": 45, "max": 200},
+    {"min": 5, "max": 70},
+    {"min": 0, "max": 100},
+    {"min": 10, "max": 100},
+    {"min": 130, "max": 300},
+    {"min": 55, "max": 200},
+    {"min": 135, "max": 250},
+    {"min": 0.75, "max": 0.9},
+    {"min": -20, "max": 50},
+    {"min": 0, "max": 200},
+    {"min": -7, "max": 50},
+    {"min": 120, "max": 250},
+    {"min": 130, "max": 250}
 ]

@@ -18,8 +18,8 @@ def calculate_symmetry_score(landmarks):
     face_size = math.hypot(max(x_coords) - min(x_coords), max(y_coords) - min(y_coords))
 
     # Define indices for the landmarks on the left and right halves of the face
-    left_landmark_indices = [7, 6, 5, 4, 3, 2, 1, 0, 17, 18, 19, 20, 21, 39, 38, 37, 36, 41, 40, 31, 32, 48, 49, 59, 58, 67]
-    right_landmark_indices = [9, 10, 11, 12, 13, 14, 15, 16, 26, 25, 24, 23, 22, 42, 43, 44, 45, 46, 47, 35, 34, 53, 54, 55, 56, 65]
+    left_landmark_indices = [39, 36, 0, 21, 31, 32, 50, 48, 58]
+    right_landmark_indices = [42, 45, 16, 22, 35, 34, 52, 54, 56]
 
     # Extract landmarks for the left and right halves
     left_landmarks = [landmarks[i] for i in left_landmark_indices]

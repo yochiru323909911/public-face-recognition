@@ -757,12 +757,12 @@ def extract_angles(features, eyes, nose, mouth, eyebrow, jaw):
     features.append(calculate_nasolabial_angle(nose, mouth))
 
     # Angle of the upper lip side
-    features.append((calculate_angle([mouth[2], mouth[0], mouth[12]]) +
-                     calculate_angle([mouth[4], mouth[6], mouth[16]])) / 2)
+    features.append((calculate_angle([mouth[2], mouth[0], mouth[6]]) +
+                     calculate_angle([mouth[4], mouth[6], mouth[0]])) / 2)
 
     # Angle of the under lip side
-    features.append((calculate_angle([mouth[11], mouth[0], mouth[12]]) +
-                     calculate_angle([mouth[7], mouth[6], mouth[16]])) / 2)
+    features.append((calculate_angle([mouth[10], mouth[0], mouth[6]]) +
+                     calculate_angle([mouth[8], mouth[6], mouth[0]])) / 2)
 
     features.append(calculate_brow_angle(eyebrow, nose))
 # ======================================================================================================================
@@ -870,9 +870,6 @@ def register(images):
         features[feature] /= len(images_features)
 
     return features  # Return the processed feature data
-
-
-
 
 
 
