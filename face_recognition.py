@@ -265,7 +265,7 @@ def extract_features(eyes, nose, mouth, eyebrow, jaw):
 
     # Find the lips ratio
     lips_ellipse = cv2.fitEllipse(np.array(mouth, dtype=np.float32))
-    features.append(abs(lips_ellipse[1][0] - lips_ellipse[1][1]))  # extract the height (length of major axis)
+    features.append(abs(lips_ellipse[1][0] / lips_ellipse[1][1]))
 
     # Extract the distance between the eyes
     eye1, eye2 = eyes[RIGHT], eyes[LEFT]
